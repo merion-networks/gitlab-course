@@ -1,0 +1,22 @@
+stages:
+    - build
+    - test
+    - deploy
+
+build_job:
+    stage: build
+    script:
+        - echo "List directory..."
+        - ls -la
+
+test_job:
+    stage: test
+    script:
+        - echo "Home directory..."
+        - cd
+
+deploy_job:
+    stage: deploy
+    script:
+        - echo "User id"
+        - id

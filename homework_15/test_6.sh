@@ -1,0 +1,1 @@
+python temp.py < input6 | grep "Invalid unit"; echo $?

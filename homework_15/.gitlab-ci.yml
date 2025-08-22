@@ -1,0 +1,70 @@
+stages:
+    - build
+    - test
+    - delivery
+    - deploy
+
+build_job:
+    stage: build
+    tags:
+        - work
+
+    script:
+        - echo "Build started..."
+        - python -m py_compile temp.py
+        - echo "Build  completed!"
+
+test_job:
+    stage: test
+    tags:
+        - work
+
+    script:
+        - echo "Testing started..."
+        - sh test_1.sh 
+        - if [ $? -ne 0 ]; then echo "Test 1 failed!";exit 1; fi
+        - sh test_2.sh 
+        - if [ $? -ne 0 ]; then echo "Test 2 failed!";exit 1; fi
+        - sh test_3.sh 
+        - if [ $? -ne 0 ]; then echo "Test 3 failed!";exit 1; fi
+        - sh test_4.sh 
+        - if [ $? -ne 0 ]; then echo "Test 4 failed!";exit 1; fi
+        - sh test_5.sh 
+        - if [ $? -ne 0 ]; then echo "Test 5 failed!";exit 1; fi
+        - sh test_6.sh 
+        - if [ $? -ne 0 ]; then echo "Test 6 failed!";exit 1; fi
+        - sh test_7.sh 
+        - if [ $? -ne 0 ]; then echo "Test 7 failed!";exit 1; fi
+
+        - sh bandit.sh 
+        - if [ $? -ne 0 ]; then echo "Security test failed!";exit 1; fi
+
+        - echo "Testing completed!"
+
+delivery_job:
+    stage: delivery
+    tags:
+        - work
+
+    script:
+        - echo "Delivery started..."
+        - ls -la
+        - pwd
+        - python setup.py bdist_wheel
+
+        - twine upload --repository-url http://192.168.248.130:8000/api/v4/projects/1/packages/pypi -r pypi dist/* < answers
+        - echo "Delivery completed!"
+
+deploy_job:
+    stage: deploy
+    tags:
+        - work
+
+    script:
+        - echo "Deploy started..."
+        - python -m venv .venv
+        - source ./.venv/bin/activate
+        - pip install --extra-index-url http://192.168.248.130:8000/api/v4/projects/1/packages/pypi/ My_package
+        - python temp.py < input1
+        - echo "Deploy completed!"
+        

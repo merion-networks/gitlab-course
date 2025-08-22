@@ -1,0 +1,1 @@
+python temp.py < input3 | grep "Converted temperature: 86.0 F"; echo $?

@@ -1,0 +1,44 @@
+stages:
+    - build
+    - test
+    - delivery
+    - deploy
+
+build_job:
+    stage: build
+    tags:
+        - work
+
+    script:
+        - echo "Build started..."
+        - python -m py_compile temp.py
+        - echo "Build  completed!"
+
+test_job:
+    stage: test
+    script:
+        - echo "Testing started..."
+        - python temp.py < input
+        - python -m venv .venv
+        - /.venv/bin/bandit temp.py 
+        - echo "Testing completed!"
+
+delivery_job:
+    stage: delivery
+    script:
+        - echo "Delivery started..."
+        - ls -la
+        - pwd
+        - python setup.py bdist_wheel
+        - mv dist/my_package-0.0.1-py3-none-any.whl dist/my_package-0.0.8-py3-none-any.whl
+        - twine upload --repository-url http://192.168.248.130:8000/api/v4/projects/1/packages/pypi -r pypi dist/* < answers
+        - echo "Delivery completed!"
+
+deploy_job:
+    stage: deploy
+    script:
+        - echo "Deploy started..."
+        - python -m venv .venv
+        - source ./.venv/bin/activate
+        - pip install --extra-index-url http://192.168.248.130:8000/api/v4/projects/1/packages/pypi/ My_package
+        - echo "Deploy completed!"

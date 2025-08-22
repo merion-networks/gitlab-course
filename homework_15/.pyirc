@@ -1,0 +1,8 @@
+index-servers =
+        gitlab
+
+[gitlab]
+repository = http://192.168.248.130:8000/api/v4/projects/1/packages/pypi
+username = user1
+password = glpat-sssveACrTsZHAigNLT7L
+

@@ -1,0 +1,9 @@
+build:
+    stage: build
+    image: docker:latest
+    tags:
+        - docker
+    script:
+        - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+        - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_SHA:0:8}" .
+        - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_SHA:0:8}"
